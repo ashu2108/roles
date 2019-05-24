@@ -1,0 +1,77 @@
+---
+
+  
+
+
+    - name: Install add-apt-repostory
+
+      apt: name=openjdk-8-jdk state=present
+
+    - name: Check java environment varibale file is there ot not
+
+      stat:
+
+        path: /etc/profile.d/java.sh
+
+      register: env_result
+
+
+
+    - name: Create Java environment variavke file
+
+      file:
+
+        path: /etc/profile.d/java.sh
+
+        state: touch
+
+      when: env_result.stat.exists == False
+
+    - name: Set JAVA_HOME To the PATH
+
+      lineinfile:
+
+        dest: /etc/profile.d/java.sh
+
+        line: '{{ item }}'
+
+      with_items:
+
+        - 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64'
+
+        - 'export PATH=${JAVA_HOME}/bin:${PATH}'
+
+    - name: Source java
+
+      shell: source /etc/profile.d/java.sh && echo $JAVA_HOME
+
+      args:
+
+        executable: /bin/bash
+      
+    - name: Add gerritadmin user and add it to sudo
+      user: name=gerritadmin
+            state=present
+            createhome=yes
+      become: yes
+      become_method: "sudo"
+
+
+    - name: get gerrit jar file
+
+      get_url:
+
+        url: https://gerrit-releases.storage.googleapis.com/gerrit-2.15.5.war
+
+        dest: /home/gerritadmin/gerrit-2.15.5.war
+ 
+    - name: executing jar file
+
+      shell: java -jar /home/gerritadmin/gerrit-2.15.5.war init --batch --dev -d /home/gerritadmin/gerrit_workspsce
+
+    - name: Create Gerrit.conf
+  
+      template: src=gerrit.config dest=/home/gerritadmin/gerrit_workspsce/etc/gerrit.config
+
+    - name: restart gerrit service
+      shell: sh /gerrit_workspsce/bin/ ./gerrit.sh restart   
