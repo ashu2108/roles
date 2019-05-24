@@ -16,7 +16,7 @@
             #all users are in all_users.out file
 
 - name: list all groups
-  shell: sudo gitlab group list > /root/Ansible-roles/roles/output/all_group.out
+  shell: sudo gitlab group list > /root/Ansible-roles/roles/output/all_groups.out
             #all groups are in all_groups.out file
           
 - name: list all projects
