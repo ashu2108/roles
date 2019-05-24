@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  tasks:
+  - name: add user to project
+    shell: 'curl --request POST --header "PRIVATE-TOKEN: T4yQ4kDa2iYyiQ4zZGb7" --data "user_id="{{ item.user_id }}"&access_level="{{ item.access_level }}""  http://35.196.172.176/api/v4/projects/"{{ item.project_id }}"/members/' 
+    with_items:
+      - { user_id: 11 , access_level: 30 , project_id: 20 }

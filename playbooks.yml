@@ -1,0 +1,5 @@
+--- 
+- hosts: localhost
+  roles: 
+    - {role: list_all} 
+     #   - {role: start-tomcat} 
